@@ -2,22 +2,21 @@ package handlers
 
 import (
 	"net/http"
-	"text/template"
+
+	"github.com/ferdiebergado/htmx-go/templates"
 )
 
 func HandleRoot(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.ParseFiles("templates/base.html", "templates/dashboard.html")
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
 
 	data := struct {
-		Title string
+		Title  string
+		Icon   string
+		Header string
 	}{
-		Title: "Personnel Travel Monitoring System",
+		Title:  "Personnel Travel Monitoring System - Dashboard",
+		Icon:   "fa-dashboard",
+		Header: "Overview",
 	}
 
-	tmpl.Execute(w, data)
+	templates.Render(w, "dashboard.html", data)
 }
