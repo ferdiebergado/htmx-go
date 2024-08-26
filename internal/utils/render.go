@@ -1,26 +1,33 @@
-package templates
+package utils
 
 import (
 	"bytes"
-	"embed"
+	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"sync"
 
-	"github.com/ferdiebergado/htmx-go/config"
+	"github.com/ferdiebergado/htmx-go/internal/config"
 )
-
-//go:embed *.html
-var TemplateFS embed.FS
 
 var templateCache = sync.Map{}
 
 func parseTemplate(templateName string) (*template.Template, error) {
+	const cacheTxt string = "Template cache"
+	const templatePathFormat string = "%s/%s"
+
 	if cachedTemplate, ok := templateCache.Load(templateName); ok {
+		log.Printf("%s hit: %s", cacheTxt, templateName)
 		return cachedTemplate.(*template.Template), nil
 	}
 
-	tmpl, err := template.ParseFS(TemplateFS, config.MasterTemplate, templateName)
+	log.Printf("%s miss: %s", cacheTxt, templateName)
+
+	layoutPath := fmt.Sprintf(templatePathFormat, config.TemplatesDir, config.MasterTemplate)
+	templatePath := fmt.Sprintf(templatePathFormat, config.TemplatesDir, templateName)
+
+	tmpl, err := template.ParseFiles(layoutPath, templatePath)
 
 	if err != nil {
 		return nil, err
@@ -31,10 +38,11 @@ func parseTemplate(templateName string) (*template.Template, error) {
 	return tmpl, nil
 }
 
-func Render(w http.ResponseWriter, tmpl string, data any) {
+func Render(w http.ResponseWriter, tmpl string, data interface{}) {
 	t, err := parseTemplate(tmpl)
 
 	if err != nil {
+		log.Println(fmt.Errorf("%w", err))
 		http.Error(w, "Unable to parse html files", http.StatusInternalServerError)
 		return
 	}
@@ -42,6 +50,7 @@ func Render(w http.ResponseWriter, tmpl string, data any) {
 	var buf bytes.Buffer
 
 	if err := t.ExecuteTemplate(&buf, tmpl, data); err != nil {
+		log.Println(fmt.Errorf("%w", err))
 		http.Error(w, "Unable to execute template", http.StatusInternalServerError)
 		return
 	}

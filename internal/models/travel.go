@@ -6,8 +6,9 @@ type Travel struct {
 	EndDate    string
 	Venue      string
 	Personnels []Personnel
+	Status     uint8
 }
 
-func (t *Travel) New(newTravel Travel) {
-
+func (t *Travel) NewTravel(newTravel Travel) *Travel {
+	return new(Travel)
 }
