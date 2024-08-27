@@ -10,7 +10,7 @@ func HandleTravels(w http.ResponseWriter, _ *http.Request) {
 
 	data := &PageData{
 		Title:  "PTMS - Travels",
-		Icon:   "fa-plane",
+		Icon:   "plane",
 		Header: "Travels",
 	}
 
