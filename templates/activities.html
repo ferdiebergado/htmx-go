@@ -1,26 +1,39 @@
 {{ template "layout" .}}
 
 {{ define "content" }}
-<div class="w3-container">
-    <p>The w3-bordered class adds a bottom border to each table row:</p>
-    <button class="w3-button w3-black">Create</button>
-    <table class="w3-table w3-bordered">
-        <tr>
-            <th>Title</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Venue</th>
-            <th>Host</th>
-            <th>Actions</th>
-        </tr>
-        <tr>
-            <td>Sample Workshop</td>
-            <td>September 15, 2024</td>
-            <td>September 19, 2024</td>
-            <td>NCR</td>
-            <td>DPWH</td>
-            <td><button class="w3-btn w3-small w3-round w3-blue">View</button></td>
-        </tr>
-    </table>
+
+<div class="w3-container w3-blue-grey w3-margin-bottom">
+    <h3>List of Activities</h3>
 </div>
+
+
+<table class="w3-table w3-bordered">
+    <tr>
+        <th>Title</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Venue</th>
+        <th>Host</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+
+    {{ range .Data }}
+    <tr>
+        <td>{{.Title}}</td>
+        <td>{{.Start}}</td>
+        <td>{{.End}}</td>
+        <td>{{.Venue}}</td>
+        <td>{{.Host}}</td>
+        <td><span class="w3-tag w3-small w3-round-large w3-yellow">{{.Status}}</span></td>
+        <td>
+            <button class="w3-button w3-small w3-round w3-blue">View</button>
+            <button class="w3-button w3-small w3-round w3-deep-orange">Edit</button>
+            <button class="w3-button w3-small w3-round w3-pink">Delete</button>
+        </td>
+    </tr>
+    {{end}}
+</table>
+
+<a href="/activities/create" class="w3-button w3-ripple w3-margin w3-teal">Create</a>
 {{ end }}

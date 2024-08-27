@@ -13,18 +13,20 @@ import (
 
 func main() {
 	port := getPort()
-	assetsPath := fmt.Sprintf("/%s/", config.AssetsDir)
+	// assetsPath := fmt.Sprintf("/%s/", config.AssetsDir)
 
 	mux := http.NewServeMux()
 
-	mux.Handle("GET "+assetsPath, http.StripPrefix(assetsPath, http.FileServer(http.Dir(config.AssetsDir))))
+	// mux.Handle("GET "+assetsPath, http.StripPrefix(assetsPath, http.FileServer(http.Dir(config.AssetsDir))))
 	mux.HandleFunc("GET /activities", handlers.HandleActivities)
+	mux.HandleFunc("GET /activities/create", handlers.CreateActivity)
 	mux.HandleFunc("GET /personnel", handlers.HandlePersonnel)
 	mux.HandleFunc("GET /travels", handlers.HandleTravels)
 	mux.HandleFunc("GET /", handlers.ShowDashboard)
 
 	pipeline := middlewares.CreatePipeline(
 		middlewares.RequestLogger,
+		middlewares.ErrorHandler,
 	)
 
 	fmt.Printf("Listening on localhost:%s...\n", port)
