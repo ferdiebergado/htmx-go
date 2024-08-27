@@ -13,6 +13,11 @@ import (
 
 var templateCache = sync.Map{}
 
+func LogHttpError(w http.ResponseWriter, desc string, status int, err error) {
+	log.Println(fmt.Errorf("%w", err))
+	http.Error(w, desc, http.StatusInternalServerError)
+}
+
 func parseTemplate(templateName string) (*template.Template, error) {
 	const cacheTxt string = "Template cache"
 	const templatePathFormat string = "%s/%s"
@@ -42,16 +47,14 @@ func Render(w http.ResponseWriter, tmpl string, data interface{}) {
 	t, err := parseTemplate(tmpl)
 
 	if err != nil {
-		log.Println(fmt.Errorf("%w", err))
-		http.Error(w, "Unable to parse html files", http.StatusInternalServerError)
+		LogHttpError(w, "Unable to parse html files", http.StatusInternalServerError, err)
 		return
 	}
 
 	var buf bytes.Buffer
 
 	if err := t.ExecuteTemplate(&buf, tmpl, data); err != nil {
-		log.Println(fmt.Errorf("%w", err))
-		http.Error(w, "Unable to execute template", http.StatusInternalServerError)
+		LogHttpError(w, "Unable to execute template", http.StatusInternalServerError, err)
 		return
 	}
 
