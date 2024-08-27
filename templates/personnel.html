@@ -1,10 +1,11 @@
 {{ template "layout" .}}
 
 {{ define "content" }}
+<div class="w3-container w3-blue-grey">
+    <h3>List of Personnel</h3>
+</div>
 
 <div class="w3-container">
-    <p>The w3-bordered class adds a bottom border to each table row:</p>
-    <button class="w3-button w3-black">Create</button>
     <table class="w3-table w3-bordered">
         <tr>
             <th>Lastname</th>
@@ -12,13 +13,21 @@
             <th>Position</th>
             <th>Actions</th>
         </tr>
+        {{ range .Data }}
         <tr>
-            <td>Doe</td>
-            <td>John</td>
-            <td>Software Engineer</td>
-            <td><button class="w3-btn w3-small w3-round w3-blue">View</button></td>
+            <td>{{.Lastname}}</td>
+            <td>{{.Firstname}}</td>
+            <td>{{.Position}}</td>
+            <td>
+                <button class="w3-button w3-small w3-round w3-blue">View</button>
+                <button class="w3-button w3-small w3-round w3-deep-orange">Edit</button>
+                <button class="w3-button w3-small w3-round w3-pink">Delete</button>
+            </td>
         </tr>
+        {{end}}
     </table>
+
+    <a href="/personnel/create" class="w3-button w3-ripple w3-margin w3-teal">Create</a>
 </div>
 
 {{ end }}
