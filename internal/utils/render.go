@@ -13,21 +13,31 @@ import (
 
 var templateCache = sync.Map{}
 
+func logResult(templateName string, isHit bool) {
+	result := "miss"
+
+	if isHit {
+		result = "hit"
+	}
+
+	log.Printf("Template cache %s: %s", result, templateName)
+}
+
 func LogHttpError(w http.ResponseWriter, desc string, status int, err error) {
 	log.Println(fmt.Errorf("%w", err))
 	http.Error(w, desc, http.StatusInternalServerError)
 }
 
 func parseTemplate(templateName string) (*template.Template, error) {
-	const cacheTxt string = "Template cache"
+
 	const templatePathFormat string = "%s/%s"
 
 	if cachedTemplate, ok := templateCache.Load(templateName); ok {
-		log.Printf("%s hit: %s", cacheTxt, templateName)
+		logResult(templateName, true)
 		return cachedTemplate.(*template.Template), nil
 	}
 
-	log.Printf("%s miss: %s", cacheTxt, templateName)
+	logResult(templateName, false)
 
 	layoutPath := fmt.Sprintf(templatePathFormat, config.TemplatesDir, config.MasterTemplate)
 	templatePath := fmt.Sprintf(templatePathFormat, config.TemplatesDir, templateName)
