@@ -1,6 +1,7 @@
 package models
 
 type Activity struct {
+	ID      int
 	Title   string
 	Start   string
 	End     string

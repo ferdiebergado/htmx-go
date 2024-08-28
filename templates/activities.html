@@ -9,23 +9,27 @@
 
 <table class="w3-table w3-bordered">
     <tr>
+        <th>ID</th>
         <th>Title</th>
         <th>Start Date</th>
         <th>End Date</th>
         <th>Venue</th>
         <th>Host</th>
         <th>Status</th>
+        <th>Remarks</th>
         <th>Actions</th>
     </tr>
 
     {{ range .Data }}
     <tr>
+        <td>{{ .ID }}</td>
         <td>{{.Title}}</td>
         <td>{{.Start}}</td>
         <td>{{.End}}</td>
         <td>{{.Venue}}</td>
         <td>{{.Host}}</td>
         <td><span class="w3-tag w3-small w3-round-large w3-yellow">{{.Status}}</span></td>
+        <td>{{.Remarks}}</td>
         <td>
             <button class="w3-button w3-small w3-round w3-blue">View</button>
             <button class="w3-button w3-small w3-round w3-deep-orange">Edit</button>

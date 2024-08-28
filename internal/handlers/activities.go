@@ -56,29 +56,41 @@ func (h *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, "/activities", http.StatusFound)
 }
 
-func (h *ActivityHandler) ListActivities(w http.ResponseWriter, _ *http.Request) {
+func (h *ActivityHandler) ListActivities(w http.ResponseWriter, r *http.Request) {
+
+	sql := `SELECT id, title, start_date, end_date, venue, host, status, remarks FROM activities`
+
+	rows, err := h.DB.Query(r.Context(), sql)
+
+	if err != nil {
+		utils.HandleHTTPError(w, err)
+		return
+	}
+
+	defer rows.Close()
 
 	var activities []interface{}
 
-	activity1 := models.Activity{
-		Title:  "Monitoring of the time.TimeGreat Red Spot for Atmospheric Anomalies",
-		Start:  "2024-09-15",
-		End:    "2024-09-19",
-		Venue:  "Jupiter",
-		Host:   "Thanos",
-		Status: 1,
-	}
+	for rows.Next() {
 
-	activity2 := models.Activity{
-		Title:  "Training on Interstellar Warfare using Magnetars",
-		Start:  "2024-11-01",
-		End:    "2024-11-04",
-		Venue:  "Andromeda Galaxy",
-		Host:   "Galactus",
-		Status: 1,
-	}
+		var activity models.Activity
 
-	activities = append(activities, activity1, activity2)
+		if err := rows.Scan(
+			&activity.ID,
+			&activity.Title,
+			&activity.Start,
+			&activity.End,
+			&activity.Venue,
+			&activity.Host,
+			&activity.Status,
+			&activity.Remarks,
+		); err != nil {
+			utils.HandleHTTPError(w, err)
+			return
+		}
+
+		activities = append(activities, activity)
+	}
 
 	data := &PageData{
 		Title:  "PTMS - Activities",
