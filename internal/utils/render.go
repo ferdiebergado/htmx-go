@@ -23,11 +23,6 @@ func logResult(templateName string, isHit bool) {
 	log.Printf("Template cache %s: %s", result, templateName)
 }
 
-func LogHttpError(w http.ResponseWriter, desc string, status int, err error) {
-	log.Println(fmt.Errorf("%w", err))
-	http.Error(w, desc, http.StatusInternalServerError)
-}
-
 func parseTemplate(templateName string) (*template.Template, error) {
 
 	const templatePathFormat string = "%s/%s"
@@ -57,14 +52,14 @@ func Render(w http.ResponseWriter, tmpl string, data interface{}) {
 	t, err := parseTemplate(tmpl)
 
 	if err != nil {
-		LogHttpError(w, "Unable to parse html files", http.StatusInternalServerError, err)
+		HandleHTTPError(w, "unable to parse files", err)
 		return
 	}
 
 	var buf bytes.Buffer
 
 	if err := t.ExecuteTemplate(&buf, tmpl, data); err != nil {
-		LogHttpError(w, "Unable to execute template", http.StatusInternalServerError, err)
+		HandleHTTPError(w, "unable to execute template", err)
 		return
 	}
 

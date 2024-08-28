@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -45,15 +43,13 @@ func (h *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Request)
 	rows, err := h.DB.Query(r.Context(), query, title, start, end, venue, host, status, remarks)
 
 	if err != nil {
-		log.Println(fmt.Errorf("an error occured: %v", err))
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		utils.HandleHTTPError(w, "Query failed", err)
 		return
 	}
 
 	defer rows.Close()
 
-	w.WriteHeader(http.StatusCreated)
-	http.Redirect(w, r, "/activities", http.StatusFound)
+	utils.Render(w, "activities.html", nil)
 }
 
 func (h *ActivityHandler) ListActivities(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +59,7 @@ func (h *ActivityHandler) ListActivities(w http.ResponseWriter, r *http.Request)
 	rows, err := h.DB.Query(r.Context(), sql)
 
 	if err != nil {
-		utils.HandleHTTPError(w, err)
+		utils.HandleHTTPError(w, "query failed", err)
 		return
 	}
 
@@ -85,7 +81,7 @@ func (h *ActivityHandler) ListActivities(w http.ResponseWriter, r *http.Request)
 			&activity.Status,
 			&activity.Remarks,
 		); err != nil {
-			utils.HandleHTTPError(w, err)
+			utils.HandleHTTPError(w, "Failed reading columns", err)
 			return
 		}
 
