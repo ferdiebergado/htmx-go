@@ -7,19 +7,28 @@ import (
 	"os"
 
 	"github.com/ferdiebergado/htmx-go/internal/config"
+	"github.com/ferdiebergado/htmx-go/internal/db"
 	"github.com/ferdiebergado/htmx-go/internal/handlers"
 	"github.com/ferdiebergado/htmx-go/internal/middlewares"
+
+	_ "github.com/lib/pq"
 )
 
 func main() {
+
+	database := db.GetDb()
+
+	defer database.Close()
+
 	port := getPort()
-	// assetsPath := fmt.Sprintf("/%s/", config.AssetsDir)
 
 	mux := http.NewServeMux()
 
-	// mux.Handle("GET "+assetsPath, http.StripPrefix(assetsPath, http.FileServer(http.Dir(config.AssetsDir))))
-	mux.HandleFunc("GET /activities", handlers.HandleActivities)
-	mux.HandleFunc("GET /activities/create", handlers.CreateActivity)
+	activityHandler := &handlers.ActivityHandler{DB: database}
+
+	mux.HandleFunc("GET /activities", activityHandler.ListActivities)
+	mux.HandleFunc("GET /activities/new", activityHandler.ShowActivityForm)
+	mux.HandleFunc("POST /activities", activityHandler.CreateActivity)
 	mux.HandleFunc("GET /personnel", handlers.HandlePersonnel)
 	mux.HandleFunc("GET /travels", handlers.HandleTravels)
 	mux.HandleFunc("GET /", handlers.ShowDashboard)

@@ -6,6 +6,16 @@ type Activity struct {
 	End     string
 	Venue   string
 	Host    string
-	Status  string
+	Status  int
 	Remarks string
+}
+
+type Status map[int]string
+
+var ActivityStatus = &Status{
+	1: "To be conducted",
+	2: "Conducted",
+	3: "Rescheduled",
+	4: "Postponed Indefinitely",
+	5: "Canceled",
 }

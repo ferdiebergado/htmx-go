@@ -14,3 +14,7 @@ clean:
 
 install:
 	go install .
+
+deploy:
+	podman build -t htmx-go_app:latest .
+	podman-compose up

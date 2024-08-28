@@ -2,8 +2,8 @@ FROM golang:1.22.6-alpine3.19 AS build
 
 WORKDIR /app
 
-# COPY go.mod go.sum ./
-# RUN go mod download
+COPY go.mod go.sum ./
+RUN go mod download
 
 COPY . .
 
@@ -15,7 +15,6 @@ WORKDIR /app
 
 COPY --from=build /app/main .
 
-# COPY ./assets ./assets
 COPY ./templates ./templates
 
 EXPOSE 8888

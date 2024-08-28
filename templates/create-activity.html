@@ -5,24 +5,24 @@
     <h3>New Activity</h3>
 </div>
 
-<form>
+<form method="post" action="/activities">
     <div class="w3-row-padding w3-margin-top">
         <div class="w3-rest">
             <label><b>Title</b></label>
-            <textarea class="w3-input w3-border w3-light-grey" rows="2"></textarea>
+            <textarea name="title" class="w3-input w3-border w3-light-grey" rows="2"></textarea>
         </div>
     </div>
     <div class="w3-row-padding w3-margin-top">
         <div class="w3-half">
 
             <label><b>Start Date</b></label>
-            <input class="w3-input w3-border w3-light-grey" type="date">
+            <input name="start_date" class="w3-input w3-border w3-light-grey" type="date">
         </div>
 
         <div class="w3-half">
 
             <label><b>End Date</b></label>
-            <input class="w3-input w3-border w3-light-grey" type="date">
+            <input name="end_date" class="w3-input w3-border w3-light-grey" type="date">
         </div>
     </div>
 
@@ -30,16 +30,34 @@
         <div class="w3-half">
 
             <label><b>Venue</b></label>
-            <input class="w3-input w3-border w3-light-grey" type="text">
+            <input name="venue" class="w3-input w3-border w3-light-grey" type="text">
         </div>
         <div class="w3-half">
 
             <label><b>Host</b></label>
-            <input class="w3-input w3-border w3-light-grey" type="text">
+            <input name="host" class="w3-input w3-border w3-light-grey" type="text">
         </div>
     </div>
 
-    <button class="w3-button w3-margin w3-teal">Save</button>
+    <div class="w3-row-padding w3-margin-top">
+        <div class="w3-half">
+            <label><b>Status</b></label>
+            <select class="w3-select" name="status">
+                <option value="" disabled selected>Select status...</option>
+                <option value="1">To be conducted</option>
+                <option value="2">Conducted</option>
+                <option value="3">Rescheduled</option>
+                <option value="4">Postponed Indefinitely</option>
+                <option value="5">Canceled</option>
+            </select>
+        </div>
+        <div class="w3-half">
+            <label><b>Remarks</b></label>
+            <input name="remarks" class="w3-input w3-border w3-light-grey" type="text">
+        </div>
+    </div>
+
+    <button type="submit" class="w3-button w3-margin w3-teal">Save</button>
     <a href="/activities">Close</a>
 </form>
 {{ end }}
