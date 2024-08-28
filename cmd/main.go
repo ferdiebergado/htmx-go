@@ -1,6 +1,7 @@
 package main
 
 import (
+	"cmp"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,11 +17,11 @@ import (
 
 func main() {
 
+	port := cmp.Or(os.Getenv("PORT"), config.Port)
+
 	database := db.GetDb()
 
 	defer database.Close()
-
-	port := getPort()
 
 	mux := http.NewServeMux()
 
@@ -41,14 +42,4 @@ func main() {
 	fmt.Printf("Listening on localhost:%s...\n", port)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), pipeline(mux)))
-}
-
-func getPort() string {
-	port := os.Getenv("PORT")
-
-	if port == "" {
-		return config.Port
-	}
-
-	return port
 }
