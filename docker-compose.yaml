@@ -6,8 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: go_app
-    volumes:
-      - assets:/app/assets
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
@@ -40,8 +38,6 @@ services:
       context: .
       dockerfile: nginx.dockerfile
     container_name: nginx_proxy
-    volumes:
-      - assets:/app/assets
     ports:
       - "8080:80"
     depends_on:
@@ -50,4 +46,3 @@ services:
 volumes:
   db_data:
   redis_data:
-  assets:
