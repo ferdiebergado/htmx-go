@@ -31,6 +31,6 @@ func RequestLogger(next http.Handler) http.Handler {
 
 		statusCode := cw.statusCode
 
-		log.Printf("%s %s %d %s %s", r.Method, r.URL.Path, statusCode, http.StatusText(statusCode), duration)
+		log.Printf("%s %s %s %d %s %s", r.Method, r.URL.Path, r.Proto, statusCode, http.StatusText(statusCode), duration)
 	})
 }
