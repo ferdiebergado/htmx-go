@@ -18,18 +18,23 @@ import (
 func main() {
 
 	port := cmp.Or(os.Getenv("PORT"), config.Port)
+	assetsPath := fmt.Sprintf("/%s/", config.AssetsDir)
 
 	database := db.GetDb()
-
 	defer database.Close()
 
 	mux := http.NewServeMux()
 
+	// assets
+	mux.Handle("GET"+assetsPath, http.StripPrefix(assetsPath, http.FileServer(http.Dir(config.AssetsDir))))
+
+	// activities
 	activityHandler := &handlers.ActivityHandler{DB: database}
 
 	mux.HandleFunc("GET /activities", activityHandler.ListActivities)
 	mux.HandleFunc("GET /activities/new", activityHandler.ShowActivityForm)
 	mux.HandleFunc("POST /activities", activityHandler.CreateActivity)
+
 	mux.HandleFunc("GET /personnel", handlers.HandlePersonnel)
 	mux.HandleFunc("GET /travels", handlers.HandleTravels)
 	mux.HandleFunc("GET /", handlers.ShowDashboard)
