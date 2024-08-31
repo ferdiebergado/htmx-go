@@ -1,22 +1,25 @@
-FROM golang:1.22.6-alpine3.19 AS build
+FROM golang:1.22.6-bookworm AS build
 
-WORKDIR /app
+ARG APP_ENV
+ARG APP_PORT
+
+WORKDIR /usr/src/app
 
 COPY go.mod go.sum ./
-RUN go mod download
+RUN go mod download && go mod verify
 
 COPY . .
 
-RUN go build -o main ./cmd/main.go
+RUN go build -v -o /usr/local/bin/app ./...
 
-FROM alpine:3.19
+FROM bookworm:12.6
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY --from=build /app/main .
+COPY --from=build /usr/local/bin/app .
 
 COPY ./templates ./templates
 
-EXPOSE 8888
+EXPOSE ${APP_PORT}
 
-CMD ["./main"]
+CMD ["./app"]
