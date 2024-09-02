@@ -46,16 +46,16 @@
             @click="activeLink = '/'"><i class="fa fa-dashboard fa-fw"></i> 
             Overview</a>
          <a href="/activities" class="w3-bar-item w3-button w3-padding"
-            :class="{ 'w3-light-gray': activeLink === '/activities' }" @click="activeLink = '/activities'"><i
+            :class="{ 'w3-light-gray': activeLink.startsWith('/activities') }" @click="activeLink = '/activities'"><i
                class="fa fa-calendar-o fa-fw"></i>  Activities</a>
          <a href="/personnel" class="w3-bar-item w3-button w3-padding"
-            :class="{ 'w3-light-gray': activeLink === '/personnel' }" @click="activeLink = '/personnel'"><i
+            :class="{ 'w3-light-gray': activeLink.startsWith('/personnel') }" @click="activeLink = '/personnel'"><i
                class="fa fa-users fa-fw"></i>  Personnel</a>
          <a href="/travels" class="w3-bar-item w3-button w3-padding"
-            :class="{ 'w3-light-gray': activeLink === '/travels' }" @click="activeLink = '/travels'"><i
+            :class="{ 'w3-light-gray': activeLink.startsWith('/travels') }" @click="activeLink = '/travels'"><i
                class="fa fa-plane fa-fw"></i>  Travels</a>
          <a href="/settings" class="w3-bar-item w3-button w3-padding"
-            :class="{ 'w3-light-gray': activeLink === '/settings' }" @click="activeLink = '/settings'"><i
+            :class="{ 'w3-light-gray': activeLink.startsWith('/settings') }" @click="activeLink = '/settings'"><i
                class="fa fa-cog fa-fw"></i>  Settings</a><br><br>
       </div>
    </nav>
