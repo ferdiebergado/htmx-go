@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"reflect"
 	"time"
 )
@@ -50,8 +49,6 @@ func flattenStructFields(v reflect.Value) ([]interface{}, error) {
 	// Iterate through the struct's fields
 	for i := 0; i < v.NumField(); i++ {
 		field := v.Field(i)
-
-		fmt.Printf("FIELD: %v\n", field)
 
 		// Recursively flatten embedded struct fields or add the field directly
 		if field.Kind() == reflect.Struct {
