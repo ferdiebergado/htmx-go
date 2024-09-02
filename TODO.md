@@ -2,8 +2,21 @@
 - ✅ fix redirect in listactivities handler
 - ✅ style activities status in activities.html
 - ✅ style sidebar
-- ☐ add csrf token in forms
-- ☐ implement sessions
+- ✅ use model repository interfaces
+- ✅ implement sessions
+- ✅ add csrf token in forms
+- ☐ add session template helper function
+- ☐ add csrf template helper function
 - ☐ flash messages
 - ☐ implement view, edit and delete activities
 - ☐ unify http errors to a single error page
+- ☐ input validation
+- ☐ authorization
+- ☐ authentication
+- ☐ use app_key for session generation
+- ☐ store sessions in redis
+- ☐ cache busting for assets
+- ☐ refactor parseDate
+- ☐ organize templates
+- ☐ check for race conditions
+
