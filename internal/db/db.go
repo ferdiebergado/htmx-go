@@ -10,12 +10,15 @@ import (
 
 type Database interface {
 	Query(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
+	QueryRow(ctx context.Context, query string, args ...interface{}) *sql.Row
 	Exec(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
 	BeginTx(ctx context.Context, opts *sql.TxOptions) (*sql.Tx, error)
 	Close() error
 }
 
 func GetDb() Database {
+	log.Println("Initializing database...")
+
 	dsn := os.Getenv("DATABASE_URL")
 
 	sqlDB, err := sql.Open("postgres", dsn)
