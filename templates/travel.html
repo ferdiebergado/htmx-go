@@ -16,6 +16,8 @@
             <th>Personnels</th>
             <th>Actions</th>
         </tr>
+
+        {{ if .Data }}
         {{ range .Data }}
         <tr>
             <td>{{.Activity}}</td>
@@ -29,6 +31,11 @@
                 <button class="w3-button w3-small w3-round w3-deep-orange">Edit</button>
                 <button class="w3-button w3-small w3-round w3-pink">Delete</button>
             </td>
+        </tr>
+        {{ end }}
+        {{ else }}
+        <tr>
+            <td>No data.</td>
         </tr>
         {{end}}
     </table>

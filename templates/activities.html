@@ -6,37 +6,45 @@
     <h3>List of Activities</h3>
 </div>
 
-
 <table class="w3-table w3-bordered">
     <tr>
-        <th>ID</th>
         <th>Title</th>
         <th>Start Date</th>
         <th>End Date</th>
         <th>Venue</th>
         <th>Host</th>
         <th>Status</th>
-        <th>Remarks</th>
         <th>Actions</th>
     </tr>
 
+    {{ if .Data }}
     {{ range .Data }}
     <tr>
-        <td>{{ .ID }}</td>
         <td>{{.Title}}</td>
-        <td>{{.Start}}</td>
-        <td>{{.End}}</td>
+        <td>{{.ParseDate .Start}}</td>
+        <td>{{.ParseDate .End}}</td>
         <td>{{.Venue}}</td>
         <td>{{.Host}}</td>
-        <td><span class="w3-tag w3-small w3-round-large w3-yellow">{{.Status}}</span></td>
-        <td>{{.Remarks}}</td>
+        <td><span class="w3-tag w3-small w3-round-large 
+            {{ if eq .Status 1 }} w3-yellow 
+            {{ else if eq .Status 2 }} w3-green 
+            {{ else if eq .Status 3 }} w3-deep-orange 
+            {{ else if eq .Status 4 }} w3-gray 
+            {{ else if eq .Status 5 }} w3-red 
+            {{ end }}">{{ .ParseStatus .Status }}</span></td>
         <td>
-            <button class="w3-button w3-small w3-round w3-blue">View</button>
+            <a href="/activities/{{.ID}}" class="w3-button w3-small w3-round w3-blue">View</a>
             <button class="w3-button w3-small w3-round w3-deep-orange">Edit</button>
             <button class="w3-button w3-small w3-round w3-pink">Delete</button>
         </td>
     </tr>
     {{end}}
+    {{ else }}
+    <tr>
+        <td>No data.</td>
+    </tr>
+    {{end}}
+
 </table>
 
 <a href="/activities/new" class="w3-button w3-ripple w3-margin w3-teal">Create</a>
