@@ -83,6 +83,11 @@ func MarshalRowToStruct(row *sql.Row, dest interface{}) error {
 	}
 
 	if err := row.Scan(fields...); err != nil {
+
+		if err == sql.ErrNoRows {
+			return nil
+		}
+
 		return err
 	}
 
@@ -97,6 +102,8 @@ func MarshalRowsToStructs(rows *sql.Rows, destSlice interface{}) error {
 	}
 
 	destSliceElemType := destSliceValue.Elem().Type().Elem()
+
+	defer rows.Close()
 
 	for rows.Next() {
 		// Create a new instance of the element type
