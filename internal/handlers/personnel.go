@@ -6,7 +6,7 @@ import (
 	"github.com/ferdiebergado/htmx-go/internal/utils"
 )
 
-func HandlePersonnel(w http.ResponseWriter, _ *http.Request) {
+func HandlePersonnel(w http.ResponseWriter, r *http.Request) {
 
 	data := &PageData{
 		Title:  "PTMS - Personnel",
@@ -14,6 +14,6 @@ func HandlePersonnel(w http.ResponseWriter, _ *http.Request) {
 		Header: "Personnel",
 	}
 
-	utils.Render(w, "personnel.html", data)
+	utils.Render(w, r, "personnel.html", data)
 
 }

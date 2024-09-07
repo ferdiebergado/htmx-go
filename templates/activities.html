@@ -17,8 +17,8 @@
         <th>Actions</th>
     </tr>
 
-    {{ if .Data }}
-    {{ range .Data }}
+    {{ if .Data.activities }}
+    {{ range .Data.activities }}
     <tr>
         <td>{{.Title}}</td>
         <td>{{.ParseDate .Start}}</td>
@@ -34,8 +34,26 @@
             {{ end }}">{{ .ParseStatus .Status }}</span></td>
         <td>
             <a href="/activities/{{.ID}}" class="w3-button w3-small w3-round w3-blue">View</a>
-            <button class="w3-button w3-small w3-round w3-deep-orange">Edit</button>
-            <button class="w3-button w3-small w3-round w3-pink">Delete</button>
+            <a href="/activities/{{.ID}}/edit" class="w3-button w3-small w3-round w3-deep-orange">Edit</a>
+            <button class="w3-button w3-small w3-round w3-pink"
+                onclick="document.getElementById('delete_form').style.display='block'">Delete</button>
+            <!-- The Modal -->
+            <div id="delete_form" class="w3-modal">
+                <div class="w3-modal-content">
+                    <div class="w3-container">
+                        <span onclick="document.getElementById('delete_form').style.display='none'"
+                            class="w3-button w3-display-topright">&times;</span>
+                        <form action="/activities/{{ .ID }}" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <label>Delete item?</label>
+                            <button type="submit" class="w3-button w3-red">Yes</button>
+                            <button class="w3-button w3-black"
+                                onclick="document.getElementById('delete_form').style.display='none'">No</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </td>
     </tr>
     {{end}}
@@ -48,4 +66,5 @@
 </table>
 
 <a href="/activities/new" class="w3-button w3-ripple w3-margin w3-teal">Create</a>
+
 {{ end }}

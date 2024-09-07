@@ -47,7 +47,7 @@ func NewActivityRepository(db db.Database) *activityRepository {
 func (r *activityRepository) GetAllActivities(ctx context.Context) ([]*Activity, error) {
 
 	const query = `
-	SELECT id, created_at, updated_at, title, start_date, end_date,  venue, host, status, remarks FROM activities
+	SELECT id, created_at, updated_at, title, start_date, end_date,  venue, host, status, remarks FROM activities ORDER BY start_date DESC
 	`
 	var activities []*Activity
 

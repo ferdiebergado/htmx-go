@@ -14,61 +14,53 @@ import (
 	"github.com/ferdiebergado/htmx-go/internal/models"
 	"github.com/ferdiebergado/htmx-go/internal/router"
 	"github.com/ferdiebergado/htmx-go/internal/services"
-	"github.com/ferdiebergado/htmx-go/internal/utils"
 
 	_ "github.com/lib/pq"
 )
 
 func main() {
-	utils.LoadEnv()
 	log.Println("APP_KEY: ", os.Getenv("APP_KEY"))
 
 	port := cmp.Or(os.Getenv("APP_PORT"), config.Port)
-	assetsPath := fmt.Sprintf("/%s/", config.AssetsDir)
+	assetsPath := fmt.Sprintf("/%s/", config.AssetsPath)
 
 	database := db.GetDb()
 	defer database.Close()
 
-	// opt, err := redis.ParseURL(os.Getenv("REDIS_URL"))
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// log.Println(opt)
-
-	// redisClient := redis.NewClient(opt)
-
 	sessionManager := services.NewSessionManager()
 
-	baseMiddlewares := []router.Middleware{
-		middlewares.RequestLogger,
-		sessionManager.SessionMiddleware,
-	}
+	pipeline := middlewares.CreatePipeline(
+		middlewares.ErrorHandler,
+		// middlewares.NotFoundMiddleware,
+	)
 
-	withCsrf := append(baseMiddlewares, sessionManager.CSRFMiddleware)
+	app := router.NewRouter()
 
-	router := router.NewRouter()
+	app.RegisterMiddlewares(middlewares.RequestLogger, sessionManager.SessionMiddleware)
 
 	// assets
-	router.Handle("GET"+assetsPath, http.StripPrefix(assetsPath, http.FileServer(http.Dir(config.AssetsDir))))
+	app.Handle(router.GET, assetsPath, http.StripPrefix(assetsPath, http.FileServer(http.Dir(config.AssetsDir))))
 
 	// root
-	router.Handle("GET /", http.HandlerFunc(handlers.ShowDashboard))
+	app.Handle(router.GET, "/", http.HandlerFunc(handlers.HomeHandler))
+	app.Handle(router.GET, "/dashboard", http.HandlerFunc(handlers.ShowDashboard))
 
 	// activities
 	activityHandler := handlers.ActivityHandler{Repository: models.NewActivityRepository(database)}
 
-	router.Handle("GET /activities", http.HandlerFunc(activityHandler.ListActivities), baseMiddlewares...)
-	router.Handle("GET /activities/new", http.HandlerFunc(activityHandler.ShowActivityForm), baseMiddlewares...)
-	router.Handle("POST /activities", http.HandlerFunc(activityHandler.CreateActivity), withCsrf...)
-	router.Handle("GET /activities/{id}", http.HandlerFunc(activityHandler.ShowActivity), baseMiddlewares...)
+	app.Handle(router.GET, "/activities", http.HandlerFunc(activityHandler.ListActivities))
+	app.Handle(router.GET, "/activities/new", http.HandlerFunc(activityHandler.ShowActivityForm))
+	app.Handle(router.POST, "/activities", http.HandlerFunc(activityHandler.CreateActivity))
+	app.Handle(router.GET, "/activities/{id}", http.HandlerFunc(activityHandler.ShowActivity))
+	app.Handle(router.GET, "/activities/{id}/edit", http.HandlerFunc(activityHandler.ShowActivityEditForm))
+	app.Handle(router.POST, "/activities/{id}", http.HandlerFunc(activityHandler.UpdateActivity))
 
-	router.Handle("GET /personnel", http.HandlerFunc(handlers.HandlePersonnel), baseMiddlewares...)
-	router.Handle("GET /travels", http.HandlerFunc(handlers.HandleTravels), baseMiddlewares...)
+	app.Handle(router.GET, "/personnel", http.HandlerFunc(handlers.HandlePersonnel))
+	app.Handle(router.GET, "/travels", http.HandlerFunc(handlers.HandleTravels))
 
-	router.Handle("GET /login", http.HandlerFunc(handlers.Login), baseMiddlewares...)
+	app.Handle(router.GET, "/login", http.HandlerFunc(handlers.Login))
 
 	fmt.Printf("Listening on localhost:%s...\n", port)
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), middlewares.ErrorHandler(router)))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), pipeline(app)))
 }

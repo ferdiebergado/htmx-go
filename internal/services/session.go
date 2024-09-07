@@ -113,19 +113,15 @@ func (sm *SessionManager) SetCSRFToken(session *Session) (string, error) {
 	return token, nil
 }
 
-func (sm *SessionManager) ValidateCSRFToken(session *Session, token string) bool {
-	log.Println("Validating csrf token...")
-	if storedToken, ok := session.Data["csrf_token"]; ok {
-		return storedToken == token
-	}
-	return false
-}
-
 func (sm *SessionManager) SessionMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := sm.GetSession(r)
+
 		if err != nil {
+
 			session, err = sm.CreateSession(w)
+			sm.SetCSRFToken(session)
+
 			if err != nil {
 				http.Error(w, "Unable to create session", http.StatusInternalServerError)
 				return
@@ -134,24 +130,6 @@ func (sm *SessionManager) SessionMiddleware(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), SessionKey{}, session)
 		next.ServeHTTP(w, r.WithContext(ctx))
-	})
-}
-
-func (sm *SessionManager) CSRFMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session := r.Context().Value(SessionKey{}).(*Session)
-
-		if r.Method == http.MethodPost {
-			csrfToken := r.FormValue("csrf_token")
-			if !sm.ValidateCSRFToken(session, csrfToken) {
-				http.Error(w, "Invalid CSRF token", http.StatusForbidden)
-				return
-			}
-
-			log.Println("csrf token valid.")
-		}
-
-		next.ServeHTTP(w, r)
 	})
 }
 

@@ -6,7 +6,7 @@ import (
 	"github.com/ferdiebergado/htmx-go/internal/utils"
 )
 
-func HandleTravels(w http.ResponseWriter, _ *http.Request) {
+func HandleTravels(w http.ResponseWriter, r *http.Request) {
 
 	data := &PageData{
 		Title:  "PTMS - Travels",
@@ -14,6 +14,6 @@ func HandleTravels(w http.ResponseWriter, _ *http.Request) {
 		Header: "Travels",
 	}
 
-	utils.Render(w, "travel.html", data)
+	utils.Render(w, r, "travel.html", data)
 
 }

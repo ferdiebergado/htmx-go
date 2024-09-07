@@ -10,7 +10,7 @@ func ShowDashboard(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
-		utils.Render(w, "notfound.html", nil)
+		utils.Render(w, r, "notfound.html", nil)
 		return
 	}
 
@@ -20,5 +20,5 @@ func ShowDashboard(w http.ResponseWriter, r *http.Request) {
 		Header: "Overview",
 	}
 
-	utils.Render(w, "dashboard.html", data)
+	utils.Render(w, r, "dashboard.html", data)
 }

@@ -2,7 +2,8 @@ package config
 
 const (
 	Port            string = "8888"
-	AssetsDir       string = "assets"
+	AssetsPath      string = "static"
+	AssetsDir       string = "public"
 	TemplatesDir    string = "templates"
 	MasterTemplate  string = "layout.html"
 	SessionName     string = "sid"

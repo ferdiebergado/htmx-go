@@ -7,5 +7,5 @@ import (
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	utils.Render(w, "login.html", nil)
+	utils.Render(w, r, "login.html", nil)
 }

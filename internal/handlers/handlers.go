@@ -4,5 +4,5 @@ type PageData struct {
 	Title  string
 	Icon   string
 	Header string
-	Data   []interface{}
+	Data   map[string]interface{}
 }

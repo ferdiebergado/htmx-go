@@ -17,7 +17,7 @@ func ErrorHandler(next http.Handler) http.Handler {
 				log.Println(fmt.Errorf("error: %v", err))
 				log.Println(string(debug.Stack()))
 				w.WriteHeader(http.StatusInternalServerError)
-				utils.Render(w, "error.html", nil)
+				utils.Render(w, r, "error.html", nil)
 			}
 		}()
 

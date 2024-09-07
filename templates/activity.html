@@ -6,7 +6,7 @@
     <h3>Activity Details</h3>
 </div>
 
-{{ $activity := index .Data 0 }}
+{{ $activity := .Data.activity }}
 
 <div class="w3-row-padding w3-margin-top">
     <div class="w3-quarter">
@@ -104,6 +104,7 @@
     </div>
 </div>
 
+<a href="/activities/{{ $activity.ID }}/edit" class="w3-button w3-ripple w3-margin w3-blue">Edit</a>
 <a href="/activities" class="w3-button w3-ripple w3-margin w3-black">Back to List</a>
 
 {{ end }}
