@@ -47,7 +47,10 @@ func NewActivityRepository(db db.Database) *activityRepository {
 func (r *activityRepository) GetAllActivities(ctx context.Context) ([]*Activity, error) {
 
 	const query = `
-	SELECT id, created_at, updated_at, title, start_date, end_date,  venue, host, status, remarks FROM activities ORDER BY start_date DESC
+	SELECT id, created_at, updated_at, title, start_date, end_date,  venue, host, status, remarks
+	FROM activities
+	WHERE deleted_at IS NULL
+	ORDER BY start_date DESC
 	`
 	var activities []*Activity
 
@@ -69,7 +72,11 @@ func (r *activityRepository) GetAllActivities(ctx context.Context) ([]*Activity,
 }
 
 func (r *activityRepository) GetActivity(ctx context.Context, id int) (*Activity, error) {
-	const query = "SELECT id, created_at, updated_at, title, start_date, end_date, venue, host, status, remarks FROM activities WHERE id = $1"
+	const query = `
+	SELECT id, created_at, updated_at, title, start_date, end_date, venue, host, status, remarks 
+	FROM activities
+	WHERE deleted_at IS NULL AND id = $1
+	`
 
 	var activity Activity
 
@@ -116,7 +123,7 @@ func (r *activityRepository) UpdateActivity(ctx context.Context, activity *Activ
 }
 
 func (r *activityRepository) DeleteActivity(ctx context.Context, id int) error {
-	const query = `DELETE FROM activities WHERE id = $1`
+	const query = `UPDATE activities SET deleted_at = NOW() WHERE id = $1`
 
 	_, err := r.DB.Exec(ctx, query, id)
 
@@ -127,7 +134,7 @@ func (a *Activity) ParseStatus(id int) string {
 	return fmt.Sprint(ActivityStatus[id])
 }
 
-func (a Activity) ParseDate(timeString string) string {
+func (a *Activity) ParseDate(timeString string) string {
 
 	t, err := time.Parse(time.RFC3339, timeString)
 	if err != nil {
