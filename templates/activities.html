@@ -6,6 +6,8 @@
     <h3>List of Activities</h3>
 </div>
 
+<a href="/activities/new" class="w3-button w3-green w3-right">Create</a>
+
 <table class="w3-table w3-bordered">
     <tr>
         <th>Title</th>
@@ -36,20 +38,24 @@
             <a href="/activities/{{.ID}}" class="w3-button w3-small w3-round w3-blue">View</a>
             <a href="/activities/{{.ID}}/edit" class="w3-button w3-small w3-round w3-deep-orange">Edit</a>
             <button class="w3-button w3-small w3-round w3-pink"
-                onclick="document.getElementById('delete_form').style.display='block'">Delete</button>
+                onclick="document.getElementById('delete_form{{ .ID }}').style.display='block'">Delete</button>
             <!-- The Modal -->
-            <div id="delete_form" class="w3-modal">
-                <div class="w3-modal-content">
-                    <div class="w3-container">
-                        <span onclick="document.getElementById('delete_form').style.display='none'"
+            <div id="delete_form{{ .ID }}" class="w3-modal">
+                <div class="w3-modal-content w3-card-4">
+                    <header class="w3-container w3-pink">
+                        <span onclick="document.getElementById('delete_form{{ .ID }}').style.display='none'"
                             class="w3-button w3-display-topright">&times;</span>
-                        <form action="/activities/{{ .ID }}" method="post">
+                        <h2>Delete Confirmation</h2>
+                    </header>
+                    <div class="w3-container">
+                        <span onclick="document.getElementById('delete_form{{ .ID }}').style.display='none'"
+                            class="w3-button w3-display-topright">&times;</span>
+                        <form class="w3-margin" action="/activities/{{ .ID }}/delete" method="post">
                             <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <label>Delete item?</label>
+                            <p>Are you sure you want to delete this item with id {{ .ID }}?</p>
                             <button type="submit" class="w3-button w3-red">Yes</button>
-                            <button class="w3-button w3-black"
-                                onclick="document.getElementById('delete_form').style.display='none'">No</button>
+                            <a class="w3-button w3-black"
+                                onclick="document.getElementById('delete_form{{ .ID }}').style.display='none'">No</a>
                         </form>
                     </div>
                 </div>
@@ -64,7 +70,5 @@
     {{end}}
 
 </table>
-
-<a href="/activities/new" class="w3-button w3-ripple w3-margin w3-teal">Create</a>
 
 {{ end }}

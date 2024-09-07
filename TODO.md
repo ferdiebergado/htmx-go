@@ -6,10 +6,10 @@
 - ✅ use model repository interfaces
 - ✅ implement sessions
 - ✅ add csrf token in forms
-- ☐ add session template helper function
-- ☐ add csrf template helper function
+- ✅ add csrf template helper function
+- ✅ add session template helper function
+- ✅ implement view, edit and delete activities
 - ☐ flash messages
-- ☐ implement view, edit and delete activities
 - ☐ unify http errors to a single error page
 - ☐ input validation
 - ☐ authorization
@@ -30,6 +30,7 @@
 - add X-XSRF-TOKEN header
 - create secure cookie with csrf token and add as X-XSRF-TOKEN header
 - custom errors
+- encrypt cookies
 
 
 

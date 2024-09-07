@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -21,7 +22,8 @@ func (h *ActivityHandler) ListActivities(w http.ResponseWriter, r *http.Request)
 	result, err := h.Repository.GetAllActivities(r.Context())
 
 	if err != nil {
-		panic(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	// Convert each element in result to interface{} and append to activities
@@ -43,7 +45,14 @@ func (h *ActivityHandler) ShowActivity(w http.ResponseWriter, r *http.Request) {
 	activity, err := extractActivity(r, h.Repository)
 
 	if err != nil {
-		panic(err)
+		log.Println("Invalid id:", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if activity.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	data := &PageData{
@@ -72,14 +81,16 @@ func (h *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Request)
 	err := r.ParseForm()
 
 	if err != nil {
-		http.Error(w, "Error parsing form data", http.StatusBadRequest)
+		log.Println("Error parsing form data:", err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	activityStatus, err := strconv.Atoi(r.FormValue("status"))
 
 	if err != nil {
-		http.Error(w, "Invalid status input", http.StatusBadRequest)
+		log.Println("Invalid status", err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -96,7 +107,9 @@ func (h *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Request)
 	_, err = h.Repository.CreateActivity(r.Context(), activity)
 
 	if err != nil {
-		panic(err)
+		log.Println("failed creating activity", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	http.Redirect(w, r, "/activities", http.StatusSeeOther)
@@ -106,7 +119,9 @@ func (h *ActivityHandler) ShowActivityEditForm(w http.ResponseWriter, r *http.Re
 	activity, err := extractActivity(r, h.Repository)
 
 	if err != nil {
-		panic(err)
+		log.Println("Invalid id", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	data := &PageData{
@@ -124,21 +139,25 @@ func (h *ActivityHandler) UpdateActivity(w http.ResponseWriter, r *http.Request)
 	err := r.ParseForm()
 
 	if err != nil {
-		http.Error(w, "Error parsing form data", http.StatusBadRequest)
+		log.Println("Invalid id", err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	activityStatus, err := strconv.Atoi(r.FormValue("status"))
 
 	if err != nil {
-		http.Error(w, "Invalid status input", http.StatusBadRequest)
+		log.Println("Invalid status", err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	activity, err := extractActivity(r, h.Repository)
 
 	if err != nil {
-		panic(err)
+		log.Println("Invalid id", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	activity.Title = r.FormValue("title")
@@ -152,7 +171,9 @@ func (h *ActivityHandler) UpdateActivity(w http.ResponseWriter, r *http.Request)
 	err = h.Repository.UpdateActivity(r.Context(), activity)
 
 	if err != nil {
-		panic(err)
+		log.Println("failed to update activity", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	http.Redirect(w, r, "/activities", http.StatusSeeOther)
@@ -162,13 +183,22 @@ func (h *ActivityHandler) DestroyActivity(w http.ResponseWriter, r *http.Request
 	activity, err := extractActivity(r, h.Repository)
 
 	if err != nil {
-		panic(err)
+		log.Println("Invalid id", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if activity.ID == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
 
 	err = h.Repository.DeleteActivity(r.Context(), activity.ID)
 
 	if err != nil {
-		panic(err)
+		log.Println("failed to delete activity", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	http.Redirect(w, r, "/activities", http.StatusSeeOther)
@@ -180,6 +210,8 @@ func extractActivity(r *http.Request, repo models.ActivityRepository) (*models.A
 	if err != nil {
 		return &models.Activity{}, err
 	}
+
+	log.Println("ACTIVITY ID:", id)
 
 	activity, err := repo.GetActivity(r.Context(), id)
 

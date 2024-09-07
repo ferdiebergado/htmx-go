@@ -22,7 +22,6 @@ func main() {
 	log.Println("APP_KEY: ", os.Getenv("APP_KEY"))
 
 	port := cmp.Or(os.Getenv("APP_PORT"), config.Port)
-	assetsPath := fmt.Sprintf("/%s/", config.AssetsPath)
 
 	database := db.GetDb()
 	defer database.Close()
@@ -31,7 +30,6 @@ func main() {
 
 	pipeline := middlewares.CreatePipeline(
 		middlewares.ErrorHandler,
-		// middlewares.NotFoundMiddleware,
 	)
 
 	app := router.NewRouter()
@@ -39,7 +37,7 @@ func main() {
 	app.RegisterMiddlewares(middlewares.RequestLogger, sessionManager.SessionMiddleware)
 
 	// assets
-	app.Handle(router.GET, assetsPath, http.StripPrefix(assetsPath, http.FileServer(http.Dir(config.AssetsDir))))
+	app.Handle(router.GET, config.AssetsPath, http.StripPrefix(config.AssetsPath, http.FileServer(http.Dir(config.AssetsDir))))
 
 	// root
 	app.Handle(router.GET, "/", http.HandlerFunc(handlers.HomeHandler))
@@ -54,6 +52,7 @@ func main() {
 	app.Handle(router.GET, "/activities/{id}", http.HandlerFunc(activityHandler.ShowActivity))
 	app.Handle(router.GET, "/activities/{id}/edit", http.HandlerFunc(activityHandler.ShowActivityEditForm))
 	app.Handle(router.POST, "/activities/{id}", http.HandlerFunc(activityHandler.UpdateActivity))
+	app.Handle(router.POST, "/activities/{id}/delete", http.HandlerFunc(activityHandler.DestroyActivity))
 
 	app.Handle(router.GET, "/personnel", http.HandlerFunc(handlers.HandlePersonnel))
 	app.Handle(router.GET, "/travels", http.HandlerFunc(handlers.HandleTravels))

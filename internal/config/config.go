@@ -2,7 +2,7 @@ package config
 
 const (
 	Port            string = "8888"
-	AssetsPath      string = "static"
+	AssetsPath      string = "/static/"
 	AssetsDir       string = "public"
 	TemplatesDir    string = "templates"
 	MasterTemplate  string = "layout.html"
