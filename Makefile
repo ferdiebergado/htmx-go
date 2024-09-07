@@ -16,5 +16,5 @@ install:
 	go install .
 
 deploy:
-	podman build -t htmx-go_app:latest .
+	podman-compose build
 	podman-compose up
