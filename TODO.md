@@ -1,4 +1,5 @@
 # TODO
+
 - ✅ fix redirect in listactivities handler
 - ✅ style activities status in activities.html
 - ✅ style sidebar
@@ -19,4 +20,16 @@
 - ☐ refactor parseDate
 - ☐ organize templates
 - ☐ check for race conditions
+- ☐ cleanup env vars in docker-compose
+- copy migrations files to postgres container
+- use vanilla js for sidebar
+- retype Data field of PageData
+- add uuid or model code db column
+- view model after saving
+- regenerate session id on login/logout
+- add X-XSRF-TOKEN header
+- create secure cookie with csrf token and add as X-XSRF-TOKEN header
+- custom errors
+
+
 
