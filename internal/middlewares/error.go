@@ -1,11 +1,12 @@
 package middlewares
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"runtime/debug"
+	"strings"
 
+	"github.com/ferdiebergado/htmx-go/internal/config"
 	"github.com/ferdiebergado/htmx-go/internal/utils"
 )
 
@@ -14,13 +15,28 @@ func ErrorHandler(next http.Handler) http.Handler {
 
 		defer func() {
 			if err := recover(); err != nil {
-				log.Println(fmt.Errorf("error: %v", err))
+				// Handle generic panics
+				log.Println("Unexpected error:", err)
 				log.Println(string(debug.Stack()))
 				w.WriteHeader(http.StatusInternalServerError)
 				utils.Render(w, r, "error.html", nil)
 			}
 		}()
 
-		next.ServeHTTP(w, r)
+		cw := &customWriter{
+			ResponseWriter: w,
+			statusCode:     http.StatusOK,
+		}
+
+		next.ServeHTTP(cw, r)
+
+		switch cw.statusCode {
+		case http.StatusNotFound:
+			if !strings.HasPrefix(r.URL.Path, config.AssetsPath) {
+				utils.Render(w, r, "notfound.html", nil)
+			}
+		case http.StatusInternalServerError:
+			utils.Render(w, r, "error.html", nil)
+		}
 	})
 }
