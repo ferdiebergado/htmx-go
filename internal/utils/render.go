@@ -65,8 +65,16 @@ func Render(w http.ResponseWriter, r *http.Request, tmpl string, data interface{
 	var buf bytes.Buffer
 
 	if err := t.ExecuteTemplate(&buf, tmpl, data); err != nil {
-		panic(err)
+		log.Println("template execution failed")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
-	buf.WriteTo(w)
+	_, err := buf.WriteTo(w)
+
+	if err != nil {
+		log.Println("failed to write to the buffer")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }

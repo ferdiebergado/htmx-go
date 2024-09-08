@@ -120,10 +120,17 @@ func (sm *SessionManager) SessionMiddleware(next http.Handler) http.Handler {
 		if err != nil {
 
 			session, err = sm.CreateSession(w)
-			sm.SetCSRFToken(session)
 
 			if err != nil {
-				log.Println("Unable to create session")
+				log.Println("unable to create a session")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			_, err := sm.SetCSRFToken(session)
+
+			if err != nil {
+				log.Println("Unable to set csrf token for the session")
 				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
