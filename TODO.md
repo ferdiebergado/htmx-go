@@ -9,8 +9,9 @@
 - ✅ add csrf template helper function
 - ✅ add session template helper function
 - ✅ implement view, edit and delete activities
+- ✅ unify http errors to a single error page
+- ✅ check for db rows error
 - ☐ flash messages
-- ☐ unify http errors to a single error page
 - ☐ input validation
 - ☐ authorization
 - ☐ authentication
@@ -31,6 +32,9 @@
 - create secure cookie with csrf token and add as X-XSRF-TOKEN header
 - custom errors
 - encrypt cookies
+- refactor config to use maps for database, etc.
+- use vite to bundle assets
+
 
 
 
