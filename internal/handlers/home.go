@@ -10,9 +10,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	// The "/" pattern matches everything, so we need to check
 	// that we're at the root here.
 	if r.URL.Path != "/" {
-		// http.Error(w, "page not found", http.StatusNotFound)
 		w.WriteHeader(http.StatusNotFound)
-		// utils.Render(w, r, "notfound.html", nil)
 		return
 	}
 
