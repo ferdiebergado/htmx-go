@@ -1,5 +1,11 @@
 package config
 
+var TrustedDomains = []string{"localhost:8080", "yourdomain.com"}
+
+var Database = map[string]interface{}{
+	"Driver": "postgres",
+}
+
 const (
 	Port            string = "8888"
 	AssetsPath      string = "/static/"
