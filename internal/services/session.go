@@ -2,14 +2,13 @@ package services
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/base64"
 	"log"
 	"net/http"
 	"sync"
 	"time"
 
 	"github.com/ferdiebergado/htmx-go/internal/config"
+	"github.com/ferdiebergado/htmx-go/internal/crypto"
 )
 
 type Session struct {
@@ -36,7 +35,8 @@ func (sm *SessionManager) CreateSession(w http.ResponseWriter) (*Session, error)
 	sm.mu.Lock()
 	defer sm.mu.Unlock()
 
-	sessionID, err := generateSessionID()
+	sessionID, err := crypto.GenerateSecureRandomBytes()
+
 	if err != nil {
 		return nil, err
 	}
@@ -104,10 +104,12 @@ func (sm *SessionManager) InvalidateSession(w http.ResponseWriter, r *http.Reque
 }
 
 func (sm *SessionManager) SetCSRFToken(session *Session) (string, error) {
-	token, err := generateCSRFToken()
+	token, err := crypto.GenerateSecureRandomBytes()
+
 	if err != nil {
 		return "", err
 	}
+
 	log.Println("Setting csrf token...")
 	session.Data["csrf_token"] = token
 	return token, nil
@@ -139,33 +141,4 @@ func (sm *SessionManager) SessionMiddleware(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), SessionKey{}, session)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
-}
-
-func generateSessionID() (string, error) {
-	bytes := make([]byte, 32)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", err
-	}
-	return base64.URLEncoding.EncodeToString(bytes), nil
-}
-
-func generateCSRFToken() (string, error) {
-	log.Println("Generating csrf token...")
-	bytes := make([]byte, 32)
-	if _, err := rand.Read(bytes); err != nil {
-		return "", err
-	}
-
-	token := base64.URLEncoding.EncodeToString(bytes)
-
-	log.Println("Csrf token: ", token)
-
-	return token, nil
-}
-
-func GetCsrf(r *http.Request, s *SessionManager) string {
-	session := r.Context().Value(SessionKey{}).(*Session)
-	csrfToken, _ := s.SetCSRFToken(session)
-
-	return csrfToken
 }

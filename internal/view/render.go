@@ -1,4 +1,4 @@
-package utils
+package view
 
 import (
 	"bytes"
@@ -35,17 +35,29 @@ func parseTemplate(templateName string, r *http.Request) *template.Template {
 	layoutPath := config.TemplatesDir + "/" + config.MasterTemplate
 	templatePath := config.TemplatesDir + "/" + templateName
 
-	session, ok := r.Context().Value(services.SessionKey{}).(*services.Session)
-
-	if !ok {
-		session = &services.Session{}
-	}
-
 	var getCsrf = func() string {
-		return session.Data["csrf_token"].(string)
+		session, ok := r.Context().Value(services.SessionKey{}).(*services.Session)
+
+		if !ok {
+			return ""
+		}
+
+		csrf, ok := session.Data["csrf_token"].(string)
+
+		if !ok {
+			return ""
+		}
+
+		return csrf
 	}
 
 	var getSession = func() *services.Session {
+		session, ok := r.Context().Value(services.SessionKey{}).(*services.Session)
+
+		if !ok {
+			session = &services.Session{}
+		}
+
 		return session
 	}
 

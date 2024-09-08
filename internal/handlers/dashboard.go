@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/ferdiebergado/htmx-go/internal/utils"
+	"github.com/ferdiebergado/htmx-go/internal/view"
 )
 
 func ShowDashboard(w http.ResponseWriter, r *http.Request) {
@@ -14,5 +14,5 @@ func ShowDashboard(w http.ResponseWriter, r *http.Request) {
 		Header: "Overview",
 	}
 
-	utils.Render(w, r, "dashboard.html", data)
+	view.Render(w, r, "dashboard.html", data)
 }

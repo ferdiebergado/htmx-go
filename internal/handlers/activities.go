@@ -7,7 +7,7 @@ import (
 
 	"github.com/ferdiebergado/htmx-go/internal/models"
 	"github.com/ferdiebergado/htmx-go/internal/services"
-	"github.com/ferdiebergado/htmx-go/internal/utils"
+	"github.com/ferdiebergado/htmx-go/internal/view"
 )
 
 type ActivityHandler struct {
@@ -38,7 +38,7 @@ func (h *ActivityHandler) ListActivities(w http.ResponseWriter, r *http.Request)
 		Data:   map[string]interface{}{"activities": activities},
 	}
 
-	utils.Render(w, r, "activities.html", data)
+	view.Render(w, r, "activities.html", data)
 }
 
 func (h *ActivityHandler) ShowActivity(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +62,7 @@ func (h *ActivityHandler) ShowActivity(w http.ResponseWriter, r *http.Request) {
 		Data:   map[string]interface{}{"activity": activity},
 	}
 
-	utils.Render(w, r, "activity.html", data)
+	view.Render(w, r, "activity.html", data)
 }
 
 func (h *ActivityHandler) ShowActivityForm(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +73,7 @@ func (h *ActivityHandler) ShowActivityForm(w http.ResponseWriter, r *http.Reques
 		Header: "Activities",
 	}
 
-	utils.Render(w, r, "activity-form.html", data)
+	view.Render(w, r, "activity-form.html", data)
 }
 
 func (h *ActivityHandler) CreateActivity(w http.ResponseWriter, r *http.Request) {
@@ -131,7 +131,7 @@ func (h *ActivityHandler) ShowActivityEditForm(w http.ResponseWriter, r *http.Re
 		Data:   map[string]interface{}{"activity": activity},
 	}
 
-	utils.Render(w, r, "activity-form.html", data)
+	view.Render(w, r, "activity-form.html", data)
 }
 
 func (h *ActivityHandler) UpdateActivity(w http.ResponseWriter, r *http.Request) {

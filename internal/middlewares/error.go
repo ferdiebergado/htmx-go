@@ -4,10 +4,9 @@ import (
 	"log"
 	"net/http"
 	"runtime/debug"
-	"strings"
 
-	"github.com/ferdiebergado/htmx-go/internal/config"
 	"github.com/ferdiebergado/htmx-go/internal/utils"
+	"github.com/ferdiebergado/htmx-go/internal/view"
 )
 
 func ErrorHandler(next http.Handler) http.Handler {
@@ -19,7 +18,7 @@ func ErrorHandler(next http.Handler) http.Handler {
 				log.Println("Unexpected error:", err)
 				log.Println(string(debug.Stack()))
 				w.WriteHeader(http.StatusInternalServerError)
-				utils.Render(w, r, "error.html", nil)
+				view.Render(w, r, "error.html", nil)
 			}
 		}()
 
@@ -33,15 +32,14 @@ func ErrorHandler(next http.Handler) http.Handler {
 		switch cw.statusCode {
 		case http.StatusNotFound:
 			log.Println("R.URL:", r.URL, ".PATH:", r.URL.Path)
-			if !strings.HasPrefix(r.URL.Path, config.AssetsPath) {
-				utils.Render(w, r, "notfound.html", nil)
-			}
+			view.Render(w, r, "notfound.html", nil)
 		case http.StatusInternalServerError:
-			utils.Render(w, r, "error.html", nil)
+			view.Render(w, r, "error.html", nil)
 		case http.StatusBadRequest:
+			// TODO:
 			utils.RedirectBack(w, r)
 		case http.StatusForbidden:
-			utils.Render(w, r, "forbidden.html", nil)
+			view.Render(w, r, "forbidden.html", nil)
 		}
 	})
 }

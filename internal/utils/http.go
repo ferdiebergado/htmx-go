@@ -9,22 +9,10 @@ import (
 	"time"
 
 	"github.com/ferdiebergado/htmx-go/internal/config"
+	"github.com/ferdiebergado/htmx-go/internal/view"
 )
 
-func RedirectBack(w http.ResponseWriter, r *http.Request) {
-	referer := r.Header.Get("Referer")
-
-	if !isValidURL(referer) || !isTrustedDomain(referer) {
-		log.Println("Invalid or untrusted referer")
-		w.WriteHeader(http.StatusNotFound)
-		Render(w, r, "notfound.html", nil)
-		return
-	}
-
-	http.Redirect(w, r, referer, http.StatusSeeOther)
-}
-
-func isTrustedDomain(urlStr string) bool {
+func IsTrustedDomain(urlStr string) bool {
 	// Parse the URL to extract the domain
 	parsedURL, err := url.Parse(urlStr)
 	if err != nil {
@@ -46,7 +34,7 @@ func isTrustedDomain(urlStr string) bool {
 	return false
 }
 
-func isValidURL(urlStr string) bool {
+func IsValidURL(urlStr string) bool {
 	// Parse the URL to validate its format
 	log.Println("Validating url...")
 	_, err := url.Parse(urlStr)
@@ -73,4 +61,17 @@ func CacheBustedURL(filePath string) (string, error) {
 
 	// Append the timestamp as a query parameter
 	return filePath + "?v=" + time.Unix(timestamp, 0).Format("20060102150405"), nil
+}
+
+func RedirectBack(w http.ResponseWriter, r *http.Request) {
+	referer := r.Header.Get("Referer")
+
+	if !IsValidURL(referer) || !IsTrustedDomain(referer) {
+		log.Println("Invalid or untrusted referer")
+		w.WriteHeader(http.StatusNotFound)
+		view.Render(w, r, "notfound.html", nil)
+		return
+	}
+
+	http.Redirect(w, r, referer, http.StatusSeeOther)
 }

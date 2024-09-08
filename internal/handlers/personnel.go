@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/ferdiebergado/htmx-go/internal/utils"
+	"github.com/ferdiebergado/htmx-go/internal/view"
 )
 
 func HandlePersonnel(w http.ResponseWriter, r *http.Request) {
@@ -14,6 +14,6 @@ func HandlePersonnel(w http.ResponseWriter, r *http.Request) {
 		Header: "Personnel",
 	}
 
-	utils.Render(w, r, "personnel.html", data)
+	view.Render(w, r, "personnel.html", data)
 
 }

@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/ferdiebergado/htmx-go/internal/crypto"
 	"github.com/ferdiebergado/htmx-go/internal/services"
 )
 
@@ -22,6 +23,18 @@ func CSRFMiddleware(next http.Handler) http.Handler {
 			}
 
 			log.Println("csrf token valid.")
+
+			token, err := crypto.GenerateSecureRandomBytes()
+
+			if err != nil {
+				log.Println("failed to generate token")
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+
+			log.Println("Regenerating csrf token...")
+
+			session.Data["csrf_token"] = token
 		}
 
 		next.ServeHTTP(w, r)

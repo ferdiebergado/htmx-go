@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/ferdiebergado/htmx-go/internal/utils"
+	"github.com/ferdiebergado/htmx-go/internal/view"
 )
 
 func HandleTravels(w http.ResponseWriter, r *http.Request) {
@@ -14,6 +14,6 @@ func HandleTravels(w http.ResponseWriter, r *http.Request) {
 		Header: "Travels",
 	}
 
-	utils.Render(w, r, "travel.html", data)
+	view.Render(w, r, "travel.html", data)
 
 }

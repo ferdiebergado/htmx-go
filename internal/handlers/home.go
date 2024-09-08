@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/ferdiebergado/htmx-go/internal/utils"
+	"github.com/ferdiebergado/htmx-go/internal/view"
 )
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -14,5 +14,5 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.Render(w, r, "home.html", nil)
+	view.Render(w, r, "home.html", nil)
 }
