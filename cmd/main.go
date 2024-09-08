@@ -34,7 +34,7 @@ func main() {
 
 	app := router.NewRouter()
 
-	app.RegisterMiddlewares(middlewares.RequestLogger, sessionManager.SessionMiddleware)
+	app.RegisterMiddlewares(middlewares.RequestLogger, sessionManager.SessionMiddleware, middlewares.CSRFMiddleware)
 
 	// assets
 	app.Handle(router.GET, config.AssetsPath, http.StripPrefix(config.AssetsPath, http.FileServer(http.Dir(config.AssetsDir))))

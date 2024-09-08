@@ -32,11 +32,16 @@ func ErrorHandler(next http.Handler) http.Handler {
 
 		switch cw.statusCode {
 		case http.StatusNotFound:
+			log.Println("R.URL:", r.URL, ".PATH:", r.URL.Path)
 			if !strings.HasPrefix(r.URL.Path, config.AssetsPath) {
 				utils.Render(w, r, "notfound.html", nil)
 			}
 		case http.StatusInternalServerError:
 			utils.Render(w, r, "error.html", nil)
+		case http.StatusBadRequest:
+			utils.RedirectBack(w, r)
+		case http.StatusForbidden:
+			utils.Render(w, r, "forbidden.html", nil)
 		}
 	})
 }
