@@ -68,6 +68,12 @@ func (r *activityRepository) GetAllActivities(ctx context.Context) ([]*Activity,
 		return nil, err
 	}
 
+	err = rows.Err()
+
+	if err != nil {
+		return nil, err
+	}
+
 	return activities, nil
 }
 
