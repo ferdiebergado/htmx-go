@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/ferdiebergado/htmx-go/internal/config"
 	"github.com/ferdiebergado/htmx-go/internal/db"
@@ -19,21 +20,20 @@ import (
 )
 
 func main() {
-	log.Println("APP_KEY: ", os.Getenv("APP_KEY"))
-
+	// port
 	port := cmp.Or(os.Getenv("APP_PORT"), config.Port)
 
+	// database
 	database := db.GetDb()
 	defer database.Close()
 
+	// session manager
 	sessionManager := services.NewSessionManager()
 
-	pipeline := middlewares.CreatePipeline(
-		middlewares.ErrorHandler,
-	)
-
+	// app
 	app := router.NewRouter()
 
+	// base middlewares
 	app.RegisterMiddlewares(middlewares.RequestLogger, sessionManager.SessionMiddleware, middlewares.CSRFMiddleware)
 
 	// assets
@@ -41,6 +41,8 @@ func main() {
 
 	// root
 	app.Handle(router.GET, "/", http.HandlerFunc(handlers.HomeHandler))
+
+	// dashboard
 	app.Handle(router.GET, "/dashboard", http.HandlerFunc(handlers.ShowDashboard))
 
 	// activities
@@ -54,12 +56,24 @@ func main() {
 	app.Handle(router.POST, "/activities/{id}", http.HandlerFunc(activityHandler.UpdateActivity))
 	app.Handle(router.POST, "/activities/{id}/delete", http.HandlerFunc(activityHandler.DestroyActivity))
 
+	// personnel
 	app.Handle(router.GET, "/personnel", http.HandlerFunc(handlers.HandlePersonnel))
+
+	// travels
 	app.Handle(router.GET, "/travels", http.HandlerFunc(handlers.HandleTravels))
 
+	// auth
 	app.Handle(router.GET, "/login", http.HandlerFunc(handlers.Login))
 
-	fmt.Printf("Listening on localhost:%s...\n", port)
+	// server
+	srv := &http.Server{
+		Addr:         ":" + port,
+		Handler:      middlewares.ErrorHandler(app),
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+		IdleTimeout:  15 * time.Second,
+	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), pipeline(app)))
+	fmt.Printf("Listening on localhost:%s...\n", port)
+	log.Fatal(srv.ListenAndServe())
 }
