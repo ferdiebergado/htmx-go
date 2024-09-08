@@ -4,6 +4,9 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
+	"time"
 
 	"github.com/ferdiebergado/htmx-go/internal/config"
 )
@@ -52,4 +55,22 @@ func isValidURL(urlStr string) bool {
 	// Perform additional validation if needed (e.g., check for specific schemes, protocols)
 
 	// return true
+}
+
+func CacheBustedURL(filePath string) (string, error) {
+	absPath, err := filepath.Abs(filePath)
+	if err != nil {
+		return "", err
+	}
+
+	fileInfo, err := os.Stat(absPath)
+	if err != nil {
+		return "", err
+	}
+
+	// Get the file's last modified timestamp
+	timestamp := fileInfo.ModTime().Unix()
+
+	// Append the timestamp as a query parameter
+	return filePath + "?v=" + time.Unix(timestamp, 0).Format("20060102150405"), nil
 }
